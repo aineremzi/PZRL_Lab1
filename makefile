@@ -1,5 +1,5 @@
 FLAGS=-c --all
-all: main.o func.o
+all: main.o func.c
 	gcc main.o func.o -o sed_simplified
 main.o: main.c
 	gcc main.c -o main.o $(FLAGS)
