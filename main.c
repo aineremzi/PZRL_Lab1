@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "func.h"
 
 #define RED "\033[31m"
@@ -25,7 +26,7 @@ int main(int argc, char* argv[]){
                 case 0:
                     regL = j + 1;
                     c++;
-                    break
+                    break;
                 case 1:
                     regR = j;
                     c++;
@@ -55,23 +56,30 @@ int main(int argc, char* argv[]){
     
     switch(argv[2][0]){
         case 's':
-            ftransform(file, expr, regR-regL, text, textR-textL);
+            int err = ftransform(file, expr, regR-regL, text, textR-textL);
+            if (err){
+                return -1;
+            }
             break;
-        case '/':
+        /*case '/':
             switch (argv[2][strlen(argv[2])-1]){
                 case 'd':
-                    fdelete(file, expr, regR-regL);
+                    int err = fdelete(file, expr, regR-regL);
+                    if (err){
+                        return -1;
+                    }
                     break;
                 default:
                     printf("Unknown operation");
-             TO_DELETE       fclose(file);
+                    fclose(file);
                     return 0;
             }
-            break;
+            break;*/
         default:
             printf("Unknown operation");
             fclose(file);
             return 0;
     }
+    fclose(file);
     return 0;
 }
