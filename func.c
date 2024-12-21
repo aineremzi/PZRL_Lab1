@@ -5,6 +5,7 @@
 
 #define RED "\033[31m"
 #define RESET "\033[0m"
+#define PURPLE "\033[35m"
 
 int ftransform(FILE* file, char* expr, int exprLen, char* text, int textLen){
     regex_t regex;
@@ -19,10 +20,17 @@ int ftransform(FILE* file, char* expr, int exprLen, char* text, int textLen){
     char* strOld;
     ssize_t read;
     size_t len;
+    printf("%s // %s\n", expr, text);
     while ((read = getline(&strOld, &len, file)) != -1){
-        size_t newLen = len - exprLen + textLen;
+        int c = 0;
+        size_t newLen = len - exprLen + textLen + 1;
         char* strNew = malloc(sizeof(char) * newLen);
-        while ((err = regexec(&regex, expr, 1, pmatch, 0)) == 0){
+        if (!strNew){
+            perror(RED"ERROR"RESET);
+            return -1;
+        }
+        strNew[newLen - 1] = '\n';
+        while ((err = regexec(&regex, strOld, 1, pmatch, 0)) == 0){
             for (int i = 0; i < pmatch[0].rm_so; i++){
                 strNew[i] = strOld[i];
             }
@@ -32,9 +40,18 @@ int ftransform(FILE* file, char* expr, int exprLen, char* text, int textLen){
             for (int i = pmatch[0].rm_so + textLen; i < newLen; i++){
                 strNew[i] = strOld[i - (pmatch[0].rm_so + textLen)];
             }
+            printf("%d\n", c);
+            c++;
+            strcpy(strOld, strNew);
+            fseek(file, -len+1, SEEK_CUR);
+            fputs(strNew, file);
+            fseek(file, 1, SEEK_CUR);
         }
-        fseek(file, -len, SEEK_CUR);
-        fputs(strNew, file);
+        if (err){
+            regerror(err, &regex, buf, 256);
+            printf(PURPLE"VERBOSE"RESET": %s\n", buf);
+            return -1;
+        } 
         free(strNew);
     }
     regfree(&regex);

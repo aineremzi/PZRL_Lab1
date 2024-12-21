@@ -29,33 +29,43 @@ int main(int argc, char* argv[]){
                     break;
                 case 1:
                     regR = j;
-                    c++;
-                    break;
-                case 2:
                     textL = j + 1;
                     c++;
                     break;
-                case 3:
+                case 2:
                     textR = j;
                     c++;
                     break;
             }
         }
     }
+    if (c!=3){
+        printf(RED"ERROR"RESET": mistake in command syntax\n");
+        return 1;
+    }
     
-    char expr[regR-regL];
-    char text[textR-textL];
+    char expr[regR-regL+1];
+    char text[textR-textL+1];
+    expr[regR-regL] = '\0';
+    text[textR-textL] = '\0';
     int i = 0;
     for (int j = regL; j < regR; j++){
-        expr[i++] = argv[2][j];
+        printf("expr%d = %c; ", i, argv[2][j]);
+        expr[i] = argv[2][j];
+        i++;
     }
+    printf("\n");
     i = 0;
     for (int j = textL; j < textR; j++){
-        text[i++] = argv[2][j];
+        printf("text%d = %c; ", i, argv[2][j]);
+        text[i] = argv[2][j];
+        i++;
     }
+    printf("\n");
     
     switch(argv[2][0]){
         case 's':
+            printf("%s // %s\n", expr, text);
             int err = ftransform(file, expr, regR-regL, text, textR-textL);
             if (err){
                 return -1;
