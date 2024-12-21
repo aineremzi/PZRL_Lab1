@@ -15,10 +15,10 @@ int freplacement(FILE* file, char* expr, char* text){
         return -1;
     }
 
-    while(!feof){
+    while(!feof(file)){
         fseek(file, pos, SEEK_SET);
         int matchCount = 0;
-        for (int i = 0, i < exprLen, i++){
+        for (int i = 0; i < exprLen; i++){
             if (expr[i] == fgetc(file)){
                 matchCount++;
             }
@@ -43,11 +43,11 @@ int fdeletion(FILE* read, FILE* write, char* expr){
         return -1;
     }
     
-    while(!feof){
+    while(!feof(read)){
         fseek(write, posw, SEEK_SET);
         fseek(read, posr, SEEK_SET);
         int matchCount = 0;
-        for (int i = 0, i < exprLen, i++){
+        for (int i = 0; i < exprLen; i++){
             if (expr[i] == fgetc(read)){
                 matchCount++;
             }
@@ -83,6 +83,7 @@ int fprefix(FILE* file, char* text){
         memcpy(line, text, textLen);
         fputs(line, file);
     }
+    return 0;
 }
 
 int fsuffix(FILE* file, char* text){
@@ -103,4 +104,5 @@ int fsuffix(FILE* file, char* text){
         memcpy(line + len, text, textLen);
         fputs(line, file);
     }
+    return 0;
 }

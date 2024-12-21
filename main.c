@@ -39,7 +39,7 @@ int main(int argc, char* argv[]){
                 perror(RED"ERROR"RESET);
                 return -1;
             }
-            int err = fdeletion(file, , write, argv[3]);
+            err = fdeletion(file, write, argv[3]);
             if (err){
                 return err;
             }
@@ -52,15 +52,16 @@ int main(int argc, char* argv[]){
             if (argv[3][0]!='-'){
                 printf("Expected flag after '-i'\n");
                 return 1;
+            }
             switch (argv[3][1]){
                 case 'f':
-                    int err = fprefix(file, argv[4]);
+                    err = fprefix(file, argv[4]);
                     if (err){
                         return err;
                     }
                     break;
                 case 'b':
-                    int err = fsuffix(file, argv[4]);
+                    err = fsuffix(file, argv[4]);
                     if (err){
                         return err;
                     }
@@ -69,7 +70,7 @@ int main(int argc, char* argv[]){
                     printf("Unknown flag after '-i'\n");
                     return 1;
             }
-        default:
+            default:
             printf("Unknown flag\n");
             return 1;
     }
