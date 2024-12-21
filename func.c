@@ -83,6 +83,7 @@ int fprefix(FILE* file, char* text){
         memcpy(line, text, textLen);
         fputs(line, file);
     }
+    free(line);
     return 0;
 }
 

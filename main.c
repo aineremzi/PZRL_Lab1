@@ -43,6 +43,7 @@ int main(int argc, char* argv[]){
             if (err){
                 return err;
             }
+            fclose(write);
             break;
         case 'i':
             if (argc < 5){
@@ -74,5 +75,6 @@ int main(int argc, char* argv[]){
             printf("Unknown flag\n");
             return 1;
     }
+    fclose(file);
     return 0;
 }
