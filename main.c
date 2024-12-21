@@ -7,9 +7,9 @@
 #define RESET "\033[0m"
 
 int main(int argc, char* argv[]){
-    if (argc < 3){
+    if (argc < 4){
         printf("Not enough arguments found. End of programm\n");
-        return 0;
+        return 1;
     }
     
     FILE* file = fopen(argv[1], "r+");
@@ -17,79 +17,61 @@ int main(int argc, char* argv[]){
         perror(RED"ERROR"RESET);
         return -1;
     }
-    
-    int regR, regL, textR, textL;
-    int c = 0;
-    for (int j = 0; j < strlen(argv[2]); j++){
-        if (argv[2][j] == '/'){
-            switch (c){
-                case 0:
-                    regL = j + 1;
-                    c++;
-                    break;
-                case 1:
-                    regR = j;
-                    textL = j + 1;
-                    c++;
-                    break;
-                case 2:
-                    textR = j;
-                    c++;
-                    break;
-            }
-        }
-    }
-    if (c!=3){
-        printf(RED"ERROR"RESET": mistake in command syntax\n");
+
+    if (argv[2][0] != '-'){
+        printf("Expected flag after file destination\n");
         return 1;
     }
-    
-    char expr[regR-regL+1];
-    char text[textR-textL+1];
-    expr[regR-regL] = '\0';
-    text[textR-textL] = '\0';
-    int i = 0;
-    for (int j = regL; j < regR; j++){
-        printf("expr%d = %c; ", i, argv[2][j]);
-        expr[i] = argv[2][j];
-        i++;
-    }
-    printf("\n");
-    i = 0;
-    for (int j = textL; j < textR; j++){
-        printf("text%d = %c; ", i, argv[2][j]);
-        text[i] = argv[2][j];
-        i++;
-    }
-    printf("\n");
-    
-    switch(argv[2][0]){
-        case 's':
-            printf("%s // %s\n", expr, text);
-            int err = ftransform(file, expr, regR-regL, text, textR-textL);
+    switch(argv[2][1]){
+        case 'r':
+            if (argc < 5){
+                printf("Expected two arguments after '-r' flag\n");
+                return 1;
+            }
+            int err = freplacement(file, argv[3], argv[4]);
             if (err){
-                return -1;
+                return err;
             }
             break;
-        /*case '/':
-            switch (argv[2][strlen(argv[2])-1]){
-                case 'd':
-                    int err = fdelete(file, expr, regR-regL);
+        case 'd':
+            FILE* write = fopen(argv[1], "w");
+            if (!write){
+                perror(RED"ERROR"RESET);
+                return -1;
+            }
+            int err = fdeletion(file, , write, argv[3]);
+            if (err){
+                return err;
+            }
+            break;
+        case 'i':
+            if (argc < 5){
+                printf("Expected flag and two more arguments\n");
+                return 1;
+            }
+            if (argv[3][0]!='-'){
+                printf("Expected flag after '-i'\n");
+                return 1;
+            switch (argv[3][1]){
+                case 'f':
+                    int err = fprefix(file, argv[4]);
                     if (err){
-                        return -1;
+                        return err;
+                    }
+                    break;
+                case 'b':
+                    int err = fsuffix(file, argv[4]);
+                    if (err){
+                        return err;
                     }
                     break;
                 default:
-                    printf("Unknown operation");
-                    fclose(file);
-                    return 0;
+                    printf("Unknown flag after '-i'\n");
+                    return 1;
             }
-            break;*/
         default:
-            printf("Unknown operation");
-            fclose(file);
-            return 0;
+            printf("Unknown flag\n");
+            return 1;
     }
-    fclose(file);
     return 0;
 }

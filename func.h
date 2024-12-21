@@ -1,7 +1,9 @@
 #ifndef FUNC_H
 #define FUNC_H
 
-int ftransform(FILE* file, char* expr, int exprLen, char* text, int textLen);
-int fdelete(FILE* file, char* expr, int exprLen);
+int freplacement(FILE* file, char* expr char* text);
+int fdeletion(FILE* read, FILE* write, char* expr);
+int fprefix(FILE* file, char* text);
+int fsuffix(FILE* file, char* text);
 
 #endif
